@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:homecenter_flutter/features/products/domain/entities/product_cart.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
@@ -36,15 +37,16 @@ class ShoppingCartLocalDatabase extends _$ShoppingCartLocalDatabase {
   int get schemaVersion => 1;
 
   /// Query to get all products from the shopping cart
-  Future<List<Product>> getAllProductsOnShoppingCart() async {
+  Future<List<ProductCart>> getAllProductsOnShoppingCart() async {
     try {
         final query = select(productCartItem);
         final results = await query.get(); 
-        return results.map((data) => Product(
+        return results.map((data) => ProductCart(
           displayName: data.displayName,
           productId: data.productId,
           price: data.price,
           mediaUrls: data.mediaUrls,
+          quantity: data.quantity,
           )
           ).toList();
       } catch (e) {
@@ -61,6 +63,7 @@ class ShoppingCartLocalDatabase extends _$ShoppingCartLocalDatabase {
           displayName: product.displayName,
           price: product.price,
           mediaUrls: product.mediaUrls,
+          quantity: 1,
         )
       );
     } catch (e) {
@@ -74,7 +77,7 @@ class ShoppingCartLocalDatabase extends _$ShoppingCartLocalDatabase {
       await (delete(productCartItem)..where(
         (productCartItem) =>
             productCartItem.productId.equals(product.productId),
-      ));
+      )).go();
     } catch (e) {
       rethrow;
     }
@@ -84,6 +87,20 @@ class ShoppingCartLocalDatabase extends _$ShoppingCartLocalDatabase {
   Future<void> clearShoppingCart() async {
     try {
       await delete(productCartItem).go();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // 
+  Future<void> updateQualityProduct(ProductCart product) async {
+    try {
+      await (update(productCartItem)..where(
+        (productCart) =>
+            productCart.productId.equals(product.productId),
+      )).write(ProductCartItemCompanion(
+        quantity: Value(product.quantity),
+      ));
     } catch (e) {
       rethrow;
     }

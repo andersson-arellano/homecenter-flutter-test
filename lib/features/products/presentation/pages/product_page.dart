@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homecenter_flutter/core/dependencys/injection_get_it.dart';
 import 'package:homecenter_flutter/features/products/presentation/bloc/products/products_bloc.dart';
+import 'package:homecenter_flutter/features/products/presentation/bloc/shopping_cart/shopping_cart_bloc.dart';
+import 'package:homecenter_flutter/features/products/presentation/pages/shopping_cart_page.dart';
+import 'package:homecenter_flutter/features/products/presentation/widgets/product_list_item.dart' show ProductListItem;
+import 'package:homecenter_flutter/features/products/presentation/widgets/search_button.dart';
 
 class ProductPage extends StatefulWidget{
   const ProductPage({super.key});
@@ -18,25 +22,39 @@ class _ProductPageState extends State<ProductPage> {
         BlocProvider(
           create: (context) => sl<ProductsBloc>(),
         ),
+        BlocProvider(
+          create: (context) => sl<ShoppingCartBloc>()..add(GetShoppingCartEvent()),
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Productos'),
+          actions: [
+            SearchButton()
+          ],
         ),
-        body: BlocBuilder<ProductsBloc, ProductsState>(
-          builder: (context, state) { 
-            return Center(
-              child: Column(
-                children: [
-                  Text('Productos Page'),
-                  TextButton(onPressed: (){
-                      context.read<ProductsBloc>().add(
-                        LoadProducts(page: 1, q: 'humedad'),
-                      );
-                  }, child: const Text("Test"))
-                ],
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ShoppingCartPage(),
               ),
             );
+          },
+          child: const Icon(Icons.shopping_cart),
+        ),
+        body: BlocBuilder<ProductsBloc, ProductsState>(
+          buildWhen: (previous, current) => previous.products != current.products,
+          builder: (context, state) { 
+            return switch(state){
+              ProductsInitial() => const Center(child: Text('Products Initial')),
+              ProductsError() => const Center(child: Text('Products Error')),
+              ProductsState() => 
+                state.q.isEmpty ||  state.products.isEmpty
+                ? const Center(child: Text('No products found'))
+                : ProductListItem(products: state.products),
+            };
           },
         ),
       ),

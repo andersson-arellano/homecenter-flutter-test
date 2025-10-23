@@ -1,4 +1,4 @@
-import 'package:homecenter_flutter/features/products/domain/entities/product.dart';
+import 'package:homecenter_flutter/features/products/domain/entities/product_cart.dart';
 import 'package:homecenter_flutter/features/products/domain/repositories/index.dart';
 
 class GetAllProductsOnShoppingCart {
@@ -8,7 +8,7 @@ class GetAllProductsOnShoppingCart {
 
   final ShoppingCartRepository _repository;
 
-  Future<List<Product>> call() {
+  Future<List<ProductCart>> call() {
     return _repository.getAllProductsOnShoppingCart();
   }
 }

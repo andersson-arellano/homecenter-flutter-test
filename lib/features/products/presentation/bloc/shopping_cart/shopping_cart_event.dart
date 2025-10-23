@@ -15,3 +15,17 @@ class RemoveProductFromShoppingCartEvent extends ShoppingCartEvent {
 }
 
 class GetShoppingCartEvent extends ShoppingCartEvent {}
+
+class ClearShoppingCartEvent extends ShoppingCartEvent {}
+
+class IncrementQualityProductOnShoppingCartEvent extends ShoppingCartEvent {
+  final ProductCart product;
+
+  IncrementQualityProductOnShoppingCartEvent({required this.product});
+}
+
+class DecrementQualityProductOnShoppingCartEvent extends ShoppingCartEvent {
+  final ProductCart product;
+
+  DecrementQualityProductOnShoppingCartEvent({required this.product});
+}

@@ -23,11 +23,7 @@ class ProductsRemoteSource extends DioSource{
         ),
       );
 
-      if (response.data == null) {
-        throw const HTTPException('No data received');
-      }
-
-      if (response.data!["data"]["results"] == null) {
+      if (response.data  == null || response.data!["data"]["results"] == null) {
         throw const HTTPException('No data received');
       }
 
@@ -39,6 +35,7 @@ class ProductsRemoteSource extends DioSource{
 
       return results;
     } on DioException catch (e) {
+      print(e);
       throw HTTPException.fromDioException(e);
     } catch (e) {
       throw HTTPException('Unexpected error: $e');

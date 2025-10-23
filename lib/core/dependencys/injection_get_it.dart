@@ -54,6 +54,7 @@ Future<void> init() async {
   sl.registerLazySingleton(()=> RemoveProductFromShoppingCart(repository: sl()));
   sl.registerLazySingleton(()=> AddProductToShoppingCart(repository: sl()));
   sl.registerLazySingleton(()=> GetAllProductsOnShoppingCart(repository: sl()));
+  sl.registerLazySingleton(()=> UpdateQualityProductOnShoppingCart(repository: sl()));
 
   // Bloc
   sl.registerFactory<ShoppingCartBloc>(()=> ShoppingCartBloc(
@@ -61,5 +62,6 @@ Future<void> init() async {
     removeProductFromShoppingCart: sl(),
     addProductToShoppingCart: sl(),
     getAllProductsOnShoppingCart: sl(),
+    updateQualityProductOnShoppingCart: sl(),
   ));
 }

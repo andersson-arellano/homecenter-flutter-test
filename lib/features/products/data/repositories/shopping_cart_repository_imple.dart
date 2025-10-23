@@ -1,5 +1,6 @@
 import 'package:homecenter_flutter/features/products/data/datasource/local/shopping_cart_local_source.dart';
 import 'package:homecenter_flutter/features/products/domain/entities/product.dart';
+import 'package:homecenter_flutter/features/products/domain/entities/product_cart.dart';
 import 'package:homecenter_flutter/features/products/domain/repositories/index.dart';
 
 class ShoppingCartRepositoryImple implements ShoppingCartRepository{
@@ -9,7 +10,7 @@ class ShoppingCartRepositoryImple implements ShoppingCartRepository{
 
   @override
   /// Gets all products on the shopping cart
-  Future<List<Product>> getAllProductsOnShoppingCart() {
+  Future<List<ProductCart>> getAllProductsOnShoppingCart() {
     return localSource.getAllProductsOnShoppingCart();
   }
 
@@ -31,5 +32,10 @@ class ShoppingCartRepositoryImple implements ShoppingCartRepository{
   /// Clears the shopping cart
   Future<void> clearShoppingCart() {
     return localSource.clearShoppingCart();
+  }
+
+  @override
+  Future<void> updateQualityProduct(ProductCart product) {
+    return localSource.updateQualityProduct(product);
   }
 }

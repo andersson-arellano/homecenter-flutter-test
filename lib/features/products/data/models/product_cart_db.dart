@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:homecenter_flutter/features/products/domain/entities/product.dart';
+import 'package:homecenter_flutter/features/products/domain/entities/product_cart.dart';
 
 class JsonConverter extends TypeConverter<List<String>, String> {
   @override
@@ -13,11 +13,12 @@ class JsonConverter extends TypeConverter<List<String>, String> {
   }
 }
 
-@UseRowClass(Product)
+@UseRowClass(ProductCart)
 class ProductCartItem extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get productId => text().withLength(min: 1, max: 255)();
   TextColumn get displayName => text().withLength(min: 1, max: 255)();
   TextColumn get price => text().withLength(min: 1, max: 255)();
   TextColumn get mediaUrls => text().withLength(min: 1, max: 255).map(JsonConverter())();
+  IntColumn get quantity => integer()();
 }

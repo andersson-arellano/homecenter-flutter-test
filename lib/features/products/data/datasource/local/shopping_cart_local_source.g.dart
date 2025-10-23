@@ -4,7 +4,7 @@ part of 'shopping_cart_local_source.dart';
 
 // ignore_for_file: type=lint
 class $ProductCartItemTable extends ProductCartItem
-    with TableInfo<$ProductCartItemTable, Product> {
+    with TableInfo<$ProductCartItemTable, ProductCart> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -78,6 +78,17 @@ class $ProductCartItemTable extends ProductCartItem
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       ).withConverter<List<String>>($ProductCartItemTable.$convertermediaUrls);
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -85,6 +96,7 @@ class $ProductCartItemTable extends ProductCartItem
     displayName,
     price,
     mediaUrls,
+    quantity,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -93,7 +105,7 @@ class $ProductCartItemTable extends ProductCartItem
   static const String $name = 'product_cart_item';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Product> instance, {
+    Insertable<ProductCart> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -128,15 +140,27 @@ class $ProductCartItemTable extends ProductCartItem
     } else if (isInserting) {
       context.missing(_priceMeta);
     }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
     return context;
   }
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Product map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ProductCart map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Product(
+    return ProductCart(
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
       productId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}product_id'],
@@ -167,18 +191,20 @@ class $ProductCartItemTable extends ProductCartItem
       JsonConverter();
 }
 
-class ProductCartItemCompanion extends UpdateCompanion<Product> {
+class ProductCartItemCompanion extends UpdateCompanion<ProductCart> {
   final Value<int> id;
   final Value<String> productId;
   final Value<String> displayName;
   final Value<String> price;
   final Value<List<String>> mediaUrls;
+  final Value<int> quantity;
   const ProductCartItemCompanion({
     this.id = const Value.absent(),
     this.productId = const Value.absent(),
     this.displayName = const Value.absent(),
     this.price = const Value.absent(),
     this.mediaUrls = const Value.absent(),
+    this.quantity = const Value.absent(),
   });
   ProductCartItemCompanion.insert({
     this.id = const Value.absent(),
@@ -186,16 +212,19 @@ class ProductCartItemCompanion extends UpdateCompanion<Product> {
     required String displayName,
     required String price,
     required List<String> mediaUrls,
+    required int quantity,
   }) : productId = Value(productId),
        displayName = Value(displayName),
        price = Value(price),
-       mediaUrls = Value(mediaUrls);
-  static Insertable<Product> custom({
+       mediaUrls = Value(mediaUrls),
+       quantity = Value(quantity);
+  static Insertable<ProductCart> custom({
     Expression<int>? id,
     Expression<String>? productId,
     Expression<String>? displayName,
     Expression<String>? price,
     Expression<String>? mediaUrls,
+    Expression<int>? quantity,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -203,6 +232,7 @@ class ProductCartItemCompanion extends UpdateCompanion<Product> {
       if (displayName != null) 'display_name': displayName,
       if (price != null) 'price': price,
       if (mediaUrls != null) 'media_urls': mediaUrls,
+      if (quantity != null) 'quantity': quantity,
     });
   }
 
@@ -212,6 +242,7 @@ class ProductCartItemCompanion extends UpdateCompanion<Product> {
     Value<String>? displayName,
     Value<String>? price,
     Value<List<String>>? mediaUrls,
+    Value<int>? quantity,
   }) {
     return ProductCartItemCompanion(
       id: id ?? this.id,
@@ -219,6 +250,7 @@ class ProductCartItemCompanion extends UpdateCompanion<Product> {
       displayName: displayName ?? this.displayName,
       price: price ?? this.price,
       mediaUrls: mediaUrls ?? this.mediaUrls,
+      quantity: quantity ?? this.quantity,
     );
   }
 
@@ -242,6 +274,9 @@ class ProductCartItemCompanion extends UpdateCompanion<Product> {
         $ProductCartItemTable.$convertermediaUrls.toSql(mediaUrls.value),
       );
     }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
     return map;
   }
 
@@ -252,7 +287,8 @@ class ProductCartItemCompanion extends UpdateCompanion<Product> {
           ..write('productId: $productId, ')
           ..write('displayName: $displayName, ')
           ..write('price: $price, ')
-          ..write('mediaUrls: $mediaUrls')
+          ..write('mediaUrls: $mediaUrls, ')
+          ..write('quantity: $quantity')
           ..write(')'))
         .toString();
   }
@@ -279,6 +315,7 @@ typedef $$ProductCartItemTableCreateCompanionBuilder =
       required String displayName,
       required String price,
       required List<String> mediaUrls,
+      required int quantity,
     });
 typedef $$ProductCartItemTableUpdateCompanionBuilder =
     ProductCartItemCompanion Function({
@@ -287,6 +324,7 @@ typedef $$ProductCartItemTableUpdateCompanionBuilder =
       Value<String> displayName,
       Value<String> price,
       Value<List<String>> mediaUrls,
+      Value<int> quantity,
     });
 
 class $$ProductCartItemTableFilterComposer
@@ -323,6 +361,11 @@ class $$ProductCartItemTableFilterComposer
     column: $table.mediaUrls,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$ProductCartItemTableOrderingComposer
@@ -358,6 +401,11 @@ class $$ProductCartItemTableOrderingComposer
     column: $table.mediaUrls,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ProductCartItemTableAnnotationComposer
@@ -385,6 +433,9 @@ class $$ProductCartItemTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<List<String>, String> get mediaUrls =>
       $composableBuilder(column: $table.mediaUrls, builder: (column) => column);
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
 }
 
 class $$ProductCartItemTableTableManager
@@ -392,21 +443,21 @@ class $$ProductCartItemTableTableManager
         RootTableManager<
           _$ShoppingCartLocalDatabase,
           $ProductCartItemTable,
-          Product,
+          ProductCart,
           $$ProductCartItemTableFilterComposer,
           $$ProductCartItemTableOrderingComposer,
           $$ProductCartItemTableAnnotationComposer,
           $$ProductCartItemTableCreateCompanionBuilder,
           $$ProductCartItemTableUpdateCompanionBuilder,
           (
-            Product,
+            ProductCart,
             BaseReferences<
               _$ShoppingCartLocalDatabase,
               $ProductCartItemTable,
-              Product
+              ProductCart
             >,
           ),
-          Product,
+          ProductCart,
           PrefetchHooks Function()
         > {
   $$ProductCartItemTableTableManager(
@@ -429,12 +480,14 @@ class $$ProductCartItemTableTableManager
                 Value<String> displayName = const Value.absent(),
                 Value<String> price = const Value.absent(),
                 Value<List<String>> mediaUrls = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
               }) => ProductCartItemCompanion(
                 id: id,
                 productId: productId,
                 displayName: displayName,
                 price: price,
                 mediaUrls: mediaUrls,
+                quantity: quantity,
               ),
           createCompanionCallback:
               ({
@@ -443,12 +496,14 @@ class $$ProductCartItemTableTableManager
                 required String displayName,
                 required String price,
                 required List<String> mediaUrls,
+                required int quantity,
               }) => ProductCartItemCompanion.insert(
                 id: id,
                 productId: productId,
                 displayName: displayName,
                 price: price,
                 mediaUrls: mediaUrls,
+                quantity: quantity,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -462,21 +517,21 @@ typedef $$ProductCartItemTableProcessedTableManager =
     ProcessedTableManager<
       _$ShoppingCartLocalDatabase,
       $ProductCartItemTable,
-      Product,
+      ProductCart,
       $$ProductCartItemTableFilterComposer,
       $$ProductCartItemTableOrderingComposer,
       $$ProductCartItemTableAnnotationComposer,
       $$ProductCartItemTableCreateCompanionBuilder,
       $$ProductCartItemTableUpdateCompanionBuilder,
       (
-        Product,
+        ProductCart,
         BaseReferences<
           _$ShoppingCartLocalDatabase,
           $ProductCartItemTable,
-          Product
+          ProductCart
         >,
       ),
-      Product,
+      ProductCart,
       PrefetchHooks Function()
     >;
 

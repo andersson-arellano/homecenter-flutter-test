@@ -11,7 +11,8 @@ class MainApp extends StatelessWidget{
     return MaterialApp(
       theme: AppTheme.lightTheme,
       home: ProductPage(),
-      debugShowCheckedModeBanner: false, 
+      debugShowCheckedModeBanner: false,
+      showPerformanceOverlay: false, 
     );
   }
 }

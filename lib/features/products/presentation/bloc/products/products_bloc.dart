@@ -49,7 +49,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState>{
 
       emit(
         ProductsLoaded(
-          products,
+          [...state.products, ...products],
           event.page ?? state.page,
           event.q ?? state.q,
         ),
