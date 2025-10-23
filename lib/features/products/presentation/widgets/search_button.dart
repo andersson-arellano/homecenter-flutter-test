@@ -23,8 +23,9 @@ class SearchButton extends StatelessWidget {
         if (result != null && result.isNotEmpty) {
           if (result == context.read<ProductsBloc>().state.q) return;
 
+          // If you change result, reload the product list
           context.read<ProductsBloc>().add(
-            LoadProducts(page: 1, q: result),
+            LoadProducts(page: 1, q: result, reloadProductList: true),
           );
         }
       },

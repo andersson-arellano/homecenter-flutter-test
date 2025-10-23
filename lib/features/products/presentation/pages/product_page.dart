@@ -38,7 +38,10 @@ class _ProductPageState extends State<ProductPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ShoppingCartPage(),
+                builder: (context) => BlocProvider.value(
+                  value: sl<ShoppingCartBloc>(),
+                  child: ShoppingCartPage(),
+                ),
               ),
             );
           },

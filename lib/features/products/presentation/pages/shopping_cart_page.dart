@@ -12,6 +12,13 @@ class ShoppingCartPage extends StatefulWidget {
 }
 
 class _ShoppingCartPageState extends State<ShoppingCartPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ShoppingCartBloc>().add(GetShoppingCartEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     // Ejemplo de datos simulados (debes reemplazar por los del Bloc)
@@ -25,17 +32,14 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
       (sum, item) => sum + (item['price'] as double) * (item['quantity'] as int),
     );
 
-    return MultiBlocProvider(providers: [
-      BlocProvider(create: (context) => sl<ShoppingCartBloc>()..add(GetShoppingCartEvent()),)
-    ], 
-    child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping Cart'),
         actions: [
           IconButton(
             onPressed: () {
-              // TODO: Evento para vaciar el carrito
-              // context.read<CartBloc>().add(ClearCart());
+              // Clear shopping cart
+              context.read<ShoppingCartBloc>().add(ClearShoppingCartEvent());
             },
             icon: const Icon(Icons.delete_forever_rounded),
             tooltip: 'Vaciar carrito',
@@ -108,7 +112,6 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
               ],
             );
         }),
-    )
     );
   }
 }

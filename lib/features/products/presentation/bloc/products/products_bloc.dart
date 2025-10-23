@@ -31,6 +31,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState>{
   }
 
   Future<void> _onLoadProducts(event, emit) async {
+    final qChange = event.q.toString() != state.q.toString();
     emit(
       ProductsLoading(
         state.products,
@@ -45,11 +46,13 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState>{
         q: event.q ?? state.q,
       );
 
-      print(products);
+      print(qChange);
+      print(state.q);
+      print(event.q);
 
       emit(
         ProductsLoaded(
-          [...state.products, ...products],
+          event.reloadProductList ? products : [...state.products, ...products],
           event.page ?? state.page,
           event.q ?? state.q,
         ),
