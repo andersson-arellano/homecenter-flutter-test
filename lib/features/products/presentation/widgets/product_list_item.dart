@@ -33,9 +33,11 @@ class _ProductListItemState extends State<ProductListItem> {
     super.didUpdateWidget(oldWidget);
 
     // If the products list has changed, scroll to the top
-    if (oldWidget.products != widget.products) {
-      _scrollToTop();
-    }
+if (widget.products.isNotEmpty && oldWidget.products.isNotEmpty) {
+  if (widget.products.first.productId != oldWidget.products.first.productId) {
+    _scrollToTop();
+  }
+}
   }
 
   void _scrollToTop() {

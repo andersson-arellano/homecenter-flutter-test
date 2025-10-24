@@ -47,8 +47,12 @@ class ShoppingCartBloc extends Bloc<ShoppingCartEvent, ShoppingCartState> {
   // Event handler for AddProductToShoppingCartEvent
   _onAddProductToShoppingCart(event, emit) async {
     try{
+      if(state.products.any((product) => product.productId == event.product.productId)){
+        emit(ShoppingCartState.failure(state.products, 'Product already in cart'));
+        return;
+      }
       await _addProductToShoppingCart(event.product);
-      emit(ShoppingCartState.success(state.products));
+      emit(ShoppingCartState.success(await _getAllProductsOnShoppingCart()));
     }catch(e){
       emit(ShoppingCartState.failure(state.products, e.toString()));
     }

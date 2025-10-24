@@ -22,17 +22,6 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Ejemplo de datos simulados (debes reemplazar por los del Bloc)
-    final cartItems = [
-      {'title': 'Smart Watch', 'price': 59.99, 'quantity': 1, 'image': 'https://via.placeholder.com/100'},
-      {'title': 'Wireless Headphones', 'price': 89.50, 'quantity': 2, 'image': 'https://via.placeholder.com/100'},
-    ];
-
-    final total = cartItems.fold<double>(
-      0,
-      (sum, item) => sum + (item['price'] as double) * (item['quantity'] as int),
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping Cart'),
@@ -49,6 +38,11 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
       ),
       body: BlocBuilder<ShoppingCartBloc, ShoppingCartState>(
         builder: (context, state){
+          // Calculate total
+          final total = state.products.fold<double>(
+             0,
+             (sum, item) => sum + ( double.parse(item.price)) * (item.quantity),
+          );
           return state.products.isEmpty
           ? const Center(
               child: Text(
@@ -83,7 +77,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            "\$${total.toStringAsFixed(2)}",
+                            "\$${total.toStringAsFixed(3)}",
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -95,8 +89,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                       const SizedBox(height: 10),
                       ElevatedButton.icon(
                         onPressed: () {
-                          // TODO: Implementar proceso de compra
-                          // context.read<CartBloc>().add(Checkout());
+                          // fake the payment process
                         },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 45),

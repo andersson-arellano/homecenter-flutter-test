@@ -69,22 +69,41 @@ class ProductItem extends StatelessWidget {
 
             const SizedBox(width: 12),
 
-            // Add Shopping Cart Button
-            IconButton(
-              onPressed: () {
-                // Add product to shopping cart 
-                context.read<ShoppingCartBloc>().add(
-                  AddProductToShoppingCartEvent(product: product),
-                );
+            // Add or remove product from Shopping Cart Button
+            BlocBuilder<ShoppingCartBloc, ShoppingCartState>(builder: (context, state){
+              if (state.products.any((productState) => productState.productId == product.productId)){
+                return IconButton(
+                  onPressed: () {
+                    // Remove product from shopping cart 
+                    context.read<ShoppingCartBloc>().add(
+                      RemoveProductFromShoppingCartEvent(product: product),
+                    );
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Producto añadido al carrito')),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Producto removido del carrito')),
+                    );
+                  },
+                  icon: const Icon(Icons.remove_shopping_cart_rounded),
+                  color: Colors.redAccent,
+                  tooltip: 'Remover del carrito',
                 );
-              },
-              icon: const Icon(Icons.add_shopping_cart_rounded),
-              color: Colors.blueAccent,
-              tooltip: 'Agregar al carrito',
-            ),
+              }
+              return IconButton(
+                onPressed: () {
+                  // Add product to shopping cart 
+                  context.read<ShoppingCartBloc>().add(
+                    AddProductToShoppingCartEvent(product: product),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Producto añadido al carrito')),
+                  );
+                },
+                icon: const Icon(Icons.add_shopping_cart_rounded),
+                color: Colors.blueAccent,
+                tooltip: 'Agregar al carrito',
+              );              
+            }),
           ],
         ),
       ),

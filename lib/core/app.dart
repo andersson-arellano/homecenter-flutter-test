@@ -12,7 +12,7 @@ class MainApp extends StatelessWidget{
       theme: AppTheme.lightTheme,
       home: ProductPage(),
       debugShowCheckedModeBanner: false,
-      showPerformanceOverlay: false, 
+      showPerformanceOverlay: true, 
     );
   }
 }
