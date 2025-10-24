@@ -1,6 +1,6 @@
 # HOMECENTER TEST APP
 
-Sample app for product search, paginated listing, and shopping cart integration. Built with Flutter using a layered (clean-ish) architecture and BLoC for state management.
+Sample app for product search, paginated listing, and shopping cart integration. Built with Flutter using Clean Architecture and BLoC for state management.
 
 ## Architecture
 
@@ -36,7 +36,6 @@ Key flow:
 4) Repositories orchestrate data sources and return Entities.
 5) BLoC emits states for UI rendering.
 
-Pagination: `ProductsBloc` uses `throttleDroppable` to avoid multiple requests from scroll and adds a bottom loader only while loading.
 
 ## Getting Started
 
@@ -66,6 +65,10 @@ Pagination: `ProductsBloc` uses `throttleDroppable` to avoid multiple requests f
 - Install dependencies
   - `flutter pub get`
 
+- Generate code (before running)
+  - One-off: `flutter pub run build_runner build --delete-conflicting-outputs`
+  - Watch (optional): `flutter pub run build_runner watch --delete-conflicting-outputs`
+
 - Run the app
   - `flutter run` (select a device/emulator)
 
@@ -77,26 +80,29 @@ Pagination: `ProductsBloc` uses `throttleDroppable` to avoid multiple requests f
 
 ```
 lib/
-  core/
-    app.dart
-    theme/
-    dependencys/
-  features/
-    products/
-      data/
-        datasource/ (remote/local)
-        models/
-        repositories/
-      domain/
-        entities/
-        repositories/
-        usecases/
-      presentation/
-        pages/
-        widgets/
-        bloc/
+├─ core/                                 # Core files
+│  ├─ dependencys/                       # Dependency injection files (get_it)
+│  ├─ theme/                             # Theme and visual styles
+│  ├─ app.dart                           # App root (MaterialApp)
+│
+├─ features/                             # Features (each feature follows the same structure)
+│  └─ products/
+│     ├─ data/                           # Data layer
+│     │  ├─ datasource/                  # Remote (API) and Local data sources
+│     │  │   ├─ remote/
+│     │  │   └─ local/
+│     │  ├─ models/                      # DTOs / data models
+│     │  └─ repositories/                # Repository implementations
+│     │
+│     ├─ domain/                         # Business logic layer
+│     │  ├─ entities/                    # Core business entities
+│     │  ├─ repositories/                # Repository interfaces
+│     │  └─ usecases/                    # Business use cases
+│     │
+│     └─ presentation/                   # UI layer
+│        ├─ bloc/                        # State management (BLoC pattern)
+│        ├─ pages/                       # Screen widgets
+│        └─ widgets/                     # Reusable UI components
+│
+└─ main.dart                             # App entry point
 ```
-
-## License
-
-Educational/demo use.
