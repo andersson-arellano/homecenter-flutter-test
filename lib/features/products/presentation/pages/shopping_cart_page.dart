@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:homecenter_flutter/core/dependencys/injection_get_it.dart';
 import 'package:homecenter_flutter/features/products/presentation/bloc/shopping_cart/shopping_cart_bloc.dart';
 import 'package:homecenter_flutter/features/products/presentation/widgets/product_cart_item.dart';
 
@@ -16,7 +15,9 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ShoppingCartBloc>().add(GetShoppingCartEvent());
+    Future.microtask(()=>
+      context.read<ShoppingCartBloc>().add(GetShoppingCartEvent())
+    );
   }
 
   @override

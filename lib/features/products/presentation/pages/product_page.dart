@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:homecenter_flutter/core/dependencys/injection_get_it.dart';
 import 'package:homecenter_flutter/features/products/presentation/bloc/products/products_bloc.dart';
 import 'package:homecenter_flutter/features/products/presentation/bloc/shopping_cart/shopping_cart_bloc.dart';
 import 'package:homecenter_flutter/features/products/presentation/pages/shopping_cart_page.dart';
@@ -17,16 +16,7 @@ class ProductPage extends StatefulWidget{
 class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => sl<ProductsBloc>(),
-        ),
-        BlocProvider(
-          create: (context) => sl<ShoppingCartBloc>()..add(GetShoppingCartEvent()),
-        ),
-      ],
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Productos'),
           actions: [
@@ -39,7 +29,7 @@ class _ProductPageState extends State<ProductPage> {
               context,
               MaterialPageRoute(
                 builder: (context) => BlocProvider.value(
-                  value: sl<ShoppingCartBloc>(),
+                  value: context.read<ShoppingCartBloc>(),
                   child: ShoppingCartPage(),
                 ),
               ),
@@ -60,7 +50,6 @@ class _ProductPageState extends State<ProductPage> {
             };
           },
         ),
-      ),
     );
   }
 }

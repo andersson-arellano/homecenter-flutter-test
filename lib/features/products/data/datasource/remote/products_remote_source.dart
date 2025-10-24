@@ -35,7 +35,6 @@ class ProductsRemoteSource extends DioSource{
 
       return results;
     } on DioException catch (e) {
-      print(e);
       throw HTTPException.fromDioException(e);
     } catch (e) {
       throw HTTPException('Unexpected error: $e');

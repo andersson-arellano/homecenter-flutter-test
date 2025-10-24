@@ -28,6 +28,24 @@ class _ProductListItemState extends State<ProductListItem> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant ProductListItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If the products list has changed, scroll to the top
+    if (oldWidget.products != widget.products) {
+      _scrollToTop();
+    }
+  }
+
+  void _scrollToTop() {
+    _controller.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   void _onScroll() {
     // When hasClients is true and the scroll position is at the end of the list
     if (
