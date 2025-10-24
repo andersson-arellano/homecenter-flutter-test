@@ -34,11 +34,11 @@ class _ProductPageState extends State<ProductPage> {
           buildWhen: (previous, current) => previous.products != current.products,
           builder: (context, state) { 
             return switch(state){
-              ProductsInitial() => const Center(child: Text('Products Initial')),
-              ProductsError() => const Center(child: Text('Products Error')),
+              ProductsInitial() => const Center(child: Text('Realice una busqueda para ver los productos')),
+              ProductsError() => const Center(child: Text('Error al buscar productos')),
               ProductsState() => 
                 state.q.isEmpty ||  state.products.isEmpty
-                ? const Center(child: Text('No products found'))
+                ? const Center(child: Text('No se encontraron productos'))
                 : ProductListItem(products: state.products),
             };
           },

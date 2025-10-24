@@ -109,14 +109,17 @@ void main() {
       build: () {
         when(() => addProductToShoppingCart(product))
             .thenAnswer((_) async {});
+        when(() => getAllProductsOnShoppingCart())
+            .thenAnswer((_) async => [cart1]);
         return buildBloc();
       },
       act: (bloc) => bloc.add(AddProductToShoppingCartEvent(product: product)),
       expect: () => [
-        predicate<ShoppingCartState>((s) => s.error == null && s.products.isEmpty),
+        predicate<ShoppingCartState>((s) => s.error == null && s.products.length == 1 && s.products.first == cart1),
       ],
       verify: (_) {
         verify(() => addProductToShoppingCart(product)).called(1);
+        verify(() => getAllProductsOnShoppingCart()).called(1);
       },
     );
 
